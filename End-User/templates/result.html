@@ -1,0 +1,79 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+    <title>Compression Result</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        h1, h2 {
+            margin-top: 30px;
+        }
+        img {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Compression Result</h1>
+    <h2>Original Image</h2>
+    <img src="{{ orig_img_path }}" alt="Original Image" width="500">
+    
+    <br><br>
+    <h2>Compressed Image</h2>
+    <img src="{{ compressed_img_path }}" alt="Compressed Image" width="500">
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Compression Result</title>
+    <style>
+        /* Add your minimal styling here */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        h1 {
+            margin-top: 30px;
+        }
+        .image-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        .image-container img {
+            max-width: 500px;
+            margin: 10px;
+        }
+        .image-info {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Compression Result by PCA</h1>
+    
+    <div class="image-container">
+        <div>
+            <h2>Original Image</h2>
+            <img src="{{ orig_img_path }}" alt="Original Image">
+            <div class="image-info">
+                <p>Dimensions: {{ orig_img_dim }}</p>
+                <p>Size: {{ orig_img_size }} kB</p>
+            </div>
+        </div>
+        <div>
+            <h2>Compressed Image</h2>
+            <img src="{{ compressed_img_path }}" alt="Compressed Image">
+            <div class="image-info">
+                <p>Dimensions: {{ compressed_img_dim }}</p>
+                <p>Size: {{ compressed_img_size }} kB</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Image Upload</title>
+</head>
+<body>
+  <h1>Image Upload</h1>
+
+  <input type="file" id="imageInput" accept="image/*">
+  <button onclick="uploadImage()">Upload</button>
+
+  <div id="imageContainer">
+    <!-- The uploaded image will be displayed here -->
+  </div>
+
+  <script>
+    function uploadImage() {
+      var input = document.getElementById('imageInput');
+      var file = input.files[0];
+
+      var formData = new FormData();
+      formData.append('image', file);
+
+      fetch('/upload', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.blob())
+      .then(data => {
+        var imageUrl = URL.createObjectURL(data);
+        var imageContainer = document.getElementById('imageContainer');
+        imageContainer.innerHTML = `<img src="${imageUrl}" alt="Uploaded Image">`;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
+  </script>
+</body>
+</html>
