@@ -267,7 +267,5 @@ def plot_size_pc(pca_channel):
     ax2.legend()
 
 
-  
-
 
 
