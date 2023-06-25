@@ -1,13 +1,33 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
 from skimage.metrics import peak_signal_noise_ratio as psnr
 from skimage.metrics import mean_squared_error as mse
 from skimage.metrics import structural_similarity as ssim
 from PIL import Image
 
+def compress_pca(image, n_components):
+    image_array = np.array(image)
+    shape = image_array.shape
+    image_array = image_array.reshape(-1, shape[-1])
+    
+    pca = PCA(n_components=n_components)
+    compressed = pca.inverse_transform(pca.fit_transform(image_array))
+    
+    compressed_image = compressed.reshape(shape)
+    return Image.fromarray(compressed_image.astype(np.uint8))
 
-
-
+def compress_kmeans(image, n_colors):
+    image_array = np.array(image)
+    shape = image_array.shape
+    image_array = image_array.reshape(-1, shape[-1])
+    
+    kmeans = KMeans(n_clusters=n_colors, random_state=42)
+    labels = kmeans.fit_predict(image_array)
+    compressed_image = kmeans.cluster_centers_[labels].reshape(shape)
+    
+    return Image.fromarray(compressed_image.astype(np.uint8))
 
 def calculate_metrics(original_image, compressed_image):
     original_array = np.array(original_image)
@@ -44,17 +64,17 @@ def plot_metrics(psnr_values, mse_values, ssim_values, labels):
     plt.show()
 
 # Load the original image
-original_image = Image.open('image.jpeg')
+original_image = Image.open('./image.jpeg')
 
 # Set the number of components for PCA and number of colors for K-means
-n_pca_components = 64
+n_pca_components = 3
 n_kmeans_colors = 64
 
 # Compress the image using PCA
-compressed_pca = compress_image(original_image)
+compressed_pca = compress_pca(original_image, n_pca_components)
 
 # Compress the image using K-means
-compressed_kmeans = compress_image_km(original_image, n_kmeans_colors)
+compressed_kmeans = compress_kmeans(original_image, n_kmeans_colors)
 
 # Calculate the metrics for both compression techniques
 psnr_values = []
