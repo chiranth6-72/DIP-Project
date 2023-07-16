@@ -3,7 +3,9 @@ from PIL import Image
 import numpy as np
 import os
 import matplotlib.pyplot as plt
-from sklearn.decomposition import PCA
+from matplotlib.image import imread, imsave
+from sklearn.decomposition import PCA, IncrementalPCA
+from skimage import color
 
 app = Flask(__name__)
 
@@ -15,6 +17,7 @@ def home():
         img_path = 'static/uploads/uploaded_image.jpg'
         file.save(img_path)
         return compress_image(img_path)
+        # return compress_image2(img_path)
     return render_template('index.html')
 
 def compress_image(img_path):
@@ -23,6 +26,7 @@ def compress_image(img_path):
     # Read the image
     orig_img = Image.open(img_path)
     
+    orig_img = orig_img.resize((1024, 1024))
     # Perform PCA compression
     # ...
     # Insert the code for performing PCA compression here
@@ -130,6 +134,69 @@ def compress_image(img_path):
                            orig_img_size=orig_img_data['img_size_kb'], compressed_img_path=compressed_img_path,
                            compressed_img_dim=compressed_img_data['img_dim'],
                            compressed_img_size=compressed_img_data['img_size_kb'])
+
+
+def compress_image2(img_path):
+    img = color.rgb2gray(imread(img_path))
+    
+    pca = PCA()
+    pca.fit(img)
+
+    variance = np.cumsum(pca.explained_variance_ratio_)*100
+    k = np.argmax(variance>98)
+    
+    ipca = IncrementalPCA(n_components=k)
+    image_compressed = ipca.inverse_transform(ipca.fit_transform(img))
+
+    imsave('static/uploads/compressed_image_km.jpg', image_compressed)
+    
+    image_compressed = Image.open('static/uploads/compressed_image_km.jpg')
+    
+
+    orig_img_data, compressed_img_data = {}, {}
+
+    orig_img = Image.open(img_path)
+    # Orig img data
+    img_size = os.stat(img_path).st_size/1024
+    data = orig_img.getdata()
+    og_pxl = np.array(data).reshape(*orig_img.size, -1)
+    img_dim = og_pxl.shape
+    
+    orig_img_data['img_size_kb'] = img_size
+    orig_img_data['img_dim'] = img_dim
+
+
+    # pca_channel = pca_compose(orig_img)
+    
+    
+    # compressed_image = pca_transform(pca_channel)
+    
+    
+    
+    
+    # Save the compressed image
+    compressed_img_path_pca = 'static/uploads/compressed_image_km.jpg'
+    # Image.fromarray(image_compressed).save(compressed_img_path_pca)
+    
+    comp_img = Image.open(compressed_img_path_pca)
+    
+    # Compressed img data
+    img_size_comp = os.stat(compressed_img_path_pca).st_size/1024
+    data_comp = comp_img.getdata()
+    comp_pxl = np.array(data_comp).reshape(*comp_img.size, -1)
+    img_dim_comp = comp_pxl.shape
+    
+    compressed_img_data_pca['img_size_kb'] = img_size_comp
+    compressed_img_data_pca['img_dim'] = img_dim_comp
+    
+    # Display the original and compressed images
+    # return render_template('result.html', orig_img_path=img_path, compressed_img_path=compressed_img_path, )
+
+    return render_template('result.html', orig_img_path=img_path, orig_img_dim=orig_img_data['img_dim'],
+                           orig_img_size=orig_img_data['img_size_kb'], compressed_img_path=compressed_img_path_pca,
+                           compressed_img_dim=compressed_img_data_pca['img_dim'],
+                           compressed_img_size=compressed_img_data_pca['img_size_kb'])
+
 
 
 if __name__ == '__main__':

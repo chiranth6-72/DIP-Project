@@ -82,13 +82,15 @@ mse_values = []
 ssim_values = []
 
 # Calculate metrics for PCA compression
-psnr_pca, mse_pca, ssim_pca = calculate_metrics(original_image, compressed_pca)
+# psnr_pca, mse_pca, ssim_pca = calculate_metrics(original_image, compressed_pca)
+psnr_pca, mse_pca, ssim_pca = calculate_metrics(original_image, Image.open('./PCA/pca_ghyb.jpeg'))
 psnr_values.append(psnr_pca)
 mse_values.append(mse_pca)
 ssim_values.append(ssim_pca)
 
 # Calculate metrics for K-means compression
-psnr_kmeans, mse_kmeans, ssim_kmeans = calculate_metrics(original_image, compressed_kmeans)
+# psnr_kmeans, mse_kmeans, ssim_kmeans = calculate_metrics(original_image, compressed_kmeans)
+psnr_kmeans, mse_kmeans, ssim_kmeans = calculate_metrics(original_image, Image.open('./Kmeans/K_64.jpeg'))
 psnr_values.append(psnr_kmeans)
 mse_values.append(mse_kmeans)
 ssim_values.append(ssim_kmeans)
